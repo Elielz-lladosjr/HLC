@@ -1,10 +1,6 @@
 #!/bin/bash
+# Auditoría heredada o nueva
+( while true; do ss -tulnp >> /root/logs/auditoria_ports.log; sleep 30; done ) &
 
-# Heredamos la lógica de base lanzando su script si es necesario, o replicamos:
-LOG_DIR="/root/logs"
-mkdir -p $LOG_DIR
-( while true; do ss -tulnp >> "$LOG_DIR/auditoria_ports.log"; sleep 30; done ) &
-
-# Arrancar servicios
 service ssh start
 nginx -g 'daemon off;'

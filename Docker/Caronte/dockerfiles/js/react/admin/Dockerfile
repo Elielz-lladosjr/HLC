@@ -1,28 +1,14 @@
-ARG AUTOR
-FROM eliel/nginx
+FROM eliel/nginx:base
 
-ENV USUARIO="eliel"
-ENV PASSWORD="eliel"
-ARG CONTEXT
-ARG PROYECTO
-ARG GITHUB
-ARG TZ
+# Instalar Node 18
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get install -y nodejs build-essential
 
+WORKDIR /var/www/app
 
+# Copiamos el script complejo del PDF
+COPY dockerfiles/js/react/admin/start.sh /usr/local/bin/start_react.sh
+RUN chmod +x /usr/local/bin/start_react.sh
 
-RUN mkdir /home/${USUARIO}/app  
-RUN gitclone ${GITHUB} /home/${USUARIO}/app
-RUN apt-get update && apt-get install -y curl gnupg software-properties-common
-
-RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
-
-RUN apt-get install -y nodejs
-
-RUN node --version && npm --version 
-
-COPY ./proyectos/${PROYECTO}/deploy/docker-compose.yml  ./js/react/admin
-EXPOSE 3000
-
-
-WORKDIR /root/admin/nginx
-ENTRYPOINT ["./admin/start.sh"]
+EXPOSE 3000 80 22
+ENTRYPOINT ["/usr/local/bin/start_react.sh"]
