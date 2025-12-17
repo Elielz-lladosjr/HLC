@@ -1,13 +1,11 @@
+FROM eliel/nginx
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get install -y nodejs build-essential
 
-FROM eliel/ubuntu:base 
+WORKDIR /var/www/app
 
-RUN apt-get update && apt-get install -y nginx
+COPY ./dockerfiles/sweb/nginx/admin/start.sh /usr/local/bin/start_react.sh
+RUN chmod +x /usr/local/bin/start_react.sh
 
-# Permisos para carpeta web
-RUN chown -R www-data:www-data /var/www/html && chmod -R 755 /var/www/html
-
-COPY start.sh /usr/local/bin/start_nginx.sh
-RUN chmod +x /usr/local/bin/start_nginx.sh
-
-EXPOSE 80 22
-ENTRYPOINT ["/usr/local/bin/start_nginx.sh"]
+EXPOSE 3000 80 22
+ENTRYPOINT ["/usr/local/bin/start_react.sh"]
