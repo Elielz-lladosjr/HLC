@@ -1,26 +1,36 @@
-set -e
+#!/bin/bash
 
-    mkdir /home/eliel/app
+# 1. Ciberseguridad
+LOG_DIR="/root/logs"
+mkdir -p $LOG_DIR
+( while true; do ss -tulnp >> "$LOG_DIR/${CONTENEDOR}_ports"; sleep 30; done ) &
 
-config_git(){
-    >Git: Clone https://github.com/morgadodesarrollador/Autocaravaneando.git >> /home/eliel/app
-    echo "Realización del clone de Autocaravaneando.git" >> /root/logs/archivo.log
-}
-config_react(){
-    if [ ! -d "node_modules" ] 
-        then npm install && npm start
-    fi
-    if [ ! -d "/build" ]
-        then npm run build
-    fi
-    cp /build /var/www/html
-    chmod 755 /var/www-data
-    echo "Realización de la configuración de react" >> /root/logs/archivo.log
-}
-main(){
-    config_git
-    config_react
-    tail -f /dev/null 
-}
+cd /var/www/app
 
-main
+# 2. Instalar dependencias (si es la primera vez)
+if [ ! -d "node_modules" ]; then
+    echo "[INFO] Instalando dependencias (esto puede tardar)..."
+    npm install
+fi
+
+# 3. PRODUCCIÓN: Generar Build y mover a Nginx
+if [ ! -d "build" ] && [ ! -d "dist" ]; then
+    echo "[INFO] Creando Build de producción..."
+    npm run build
+    
+    echo "[INFO] Copiando a Nginx (/var/www/html)..."
+    # Copia build o dist (dependiendo de la versión de react)
+    cp -r build/* /var/www/html/ 2>/dev/null || cp -r dist/* /var/www/html/ 2>/dev/null
+    chown -R www-data:www-data /var/www/html
+fi
+
+# 4. Arrancar SSH
+service ssh start
+
+# 5. Arrancar Nginx en SEGUNDO PLANO (Background)
+# Usamos '&' para que no bloquee el script
+nginx -g 'daemon off;' &
+
+# 6. DESARROLLO: Arrancar Node en PRIMER PLANO
+echo "[INFO] Arrancando entorno de Desarrollo..."
+npm start

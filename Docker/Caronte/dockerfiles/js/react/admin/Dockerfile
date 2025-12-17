@@ -1,12 +1,14 @@
-FROM eliel/nginx:base
+# Heredamos de Nginx
+FROM eliel/ubnginx
 
-# Instalar Node 18
+# 1. Instalar Node.js 18
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
     apt-get install -y nodejs build-essential
 
+# 2. Carpeta de trabajo para el código fuente
 WORKDIR /var/www/app
 
-# Copiamos el script complejo del PDF
+# 3. Script Maestro (Build + Deploy + Dev)
 COPY dockerfiles/js/react/admin/start.sh /usr/local/bin/start_react.sh
 RUN chmod +x /usr/local/bin/start_react.sh
 
