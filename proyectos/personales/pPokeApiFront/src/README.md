@@ -1,2 +1,0 @@
-# Poke-app
-PokeApi
