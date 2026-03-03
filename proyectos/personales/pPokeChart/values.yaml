@@ -1,0 +1,23 @@
+namespace: proyecto-eliel
+
+postgres:
+  name: postgres-db
+  # AÑADIMOS EL PREFIJO Y EL SUFIJO
+  image: eliel/cibersecurity
+  user: eliel_admin
+  password: eliel_password123
+  dbName: pokes_db
+  port: 5432
+
+backend:
+  name: poke-backend
+  # AÑADIMOS EL PREFIJO Y EL SUFIJO
+  image: eliel/nest-api
+  port: 3000
+
+# (El frontend déjalo como estaba, que ese sí funcionó)
+frontend:
+  name: poke-frontend
+  image: eliel/poke-front
+  replicas: 3
+  port: 80

@@ -1,0 +1,12 @@
+services:
+  web:
+    build:
+      context: ${CONTEXTO}
+      dockerfile: deploy/Dockerfile
+    container_name: ctpokeapidb
+    ports:
+      - "${PUERTO_EXTERNO}:3000"
+    volumes:
+      # TRUCAZO: Sincronizamos el archivo sqlite para que no se borren los datos si se apaga el docker
+      - ../src/database.sqlite:/app/database.sqlite
+    restart: always

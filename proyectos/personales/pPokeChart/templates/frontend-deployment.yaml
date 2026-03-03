@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.frontend.name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.frontend.replicas }} # Aquí es donde Helm pondrá el "3" del values.yaml
+  selector:
+    matchLabels:
+      app: poke-frontend
+  template:
+    metadata:
+      labels:
+        app: poke-frontend
+    spec:
+      containers:
+      - name: frontend
+        image: {{ .Values.frontend.image }}
+        imagePullPolicy: IfNotPresent
+        command: ["nginx", "-g", "daemon off;"]
+        ports:
+        - containerPort: {{ .Values.frontend.port }}

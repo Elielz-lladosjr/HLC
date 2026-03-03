@@ -1,0 +1,16 @@
+services:
+  ub-ciberseguridad:
+    build: 
+      context: ${CONTEXTO}
+      dockerfile: ./dockerfiles/cibersecurity/Dockerfile
+      args: #variables en DFILE para la construccion (build) de la imagen dkjfhasdlfjhasl dfgjas
+        - PROYECTO=${PROYECTO}
+        - PASSWORD=1234
+    image: morgadoberruezo/ubsecurity #nombre de la imagen para docker hub
+    container_name: ctciber
+    volumes:
+      - ./logs:/root/logs
+    env_file:
+      - .env
+
+

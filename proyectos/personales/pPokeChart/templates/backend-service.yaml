@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.backend.name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  type: NodePort # Para que podamos probarlo desde fuera con Postman
+  selector:
+    app: poke-backend
+  ports:
+    - protocol: TCP
+      port: {{ .Values.backend.port }}
+      targetPort: {{ .Values.backend.port }}
+      nodePort: 30001 # Puerto externo para Postman

@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.postgres.name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: {{ .Values.postgres.image }}
+        imagePullPolicy: IfNotPresent 
+        ports:
+        - containerPort: {{ .Values.postgres.port }}
+        env:
+        # Estas variables las lee tu entrypoint.sh para crear la DB
+        - name: DB_USER
+          value: {{ .Values.postgres.user }}
+        - name: DB_PASSWORD
+          value: {{ .Values.postgres.password }}
+        - name: DB_NAME
+          value: {{ .Values.postgres.dbName }}
